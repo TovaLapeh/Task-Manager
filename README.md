@@ -91,6 +91,21 @@ npm start
 This runs the API and the Angular dev server together via `concurrently`, and is
 the command StackBlitz uses. Open <http://localhost:4200>.
 
+### Running on StackBlitz
+
+Open the project with the preview pinned to the UI port:
+
+<https://stackblitz.com/github/TovaLapeh/Task-Manager?port=4200>
+
+The first build takes roughly 15–60 seconds — wait for
+`➜ Local: http://localhost:4200/` in the terminal before expecting the preview.
+
+Two ports are served: **4200** is the user interface, **3000** is the API.
+StackBlitz previews whichever port opens first, and the API wins that race
+because the Angular build takes longer, so the preview may land on port 3000.
+If it shows the API landing page instead of the app, switch the port selector in
+the preview pane to 4200.
+
 The client talks to the API through the Angular dev-server proxy
 (`client/proxy.config.json`), so requests go to `/tasks` on the same origin and
 are forwarded to `http://localhost:3000`. That means there is no hardcoded API
