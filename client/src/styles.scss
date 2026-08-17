@@ -1,0 +1,36 @@
+/*
+ * Bootstrap is compiled from source here rather than loaded as prebuilt CSS,
+ * so the theme colour can be changed in one place.
+ *
+ * Overriding the CSS custom property --bs-primary would NOT work: Bootstrap
+ * compiles theme colours into hardcoded values (e.g. `.btn-primary` sets
+ * `--bs-btn-bg: #0d6efd`), so the palette has to be set before the SASS is
+ * compiled. Order matters — functions, then our overrides, then the rest.
+ */
+@import "bootstrap/scss/functions";
+
+// Brand colour. Deliberately a darker green: Bootstrap picks button text
+// colour by contrast ratio, and a lighter green (#16a34a) fell below the
+// threshold and produced black-on-green text. This shade keeps white text.
+$primary: #15803d;
+
+@import "bootstrap/scss/bootstrap";
+
+/*
+ * Custom CSS is limited to the two things Bootstrap does not provide.
+ */
+
+// Bootstrap's palette has no teal->green gradient utility.
+.bg-app-header {
+  background-image: linear-gradient(135deg, #0d9488, $primary);
+}
+
+// Bootstrap ships .text-truncate (single line) but no line-clamp utility.
+// Limits long task descriptions to two lines so row heights stay uniform.
+.text-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}

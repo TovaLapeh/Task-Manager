@@ -1,0 +1,65 @@
+<!-- The host element is the <tr> itself (see selector), so this template
+     contains only the cells. -->
+
+<td class="py-3 ps-3 text-nowrap">
+  <span class="text-body-secondary small font-monospace">#{{ task().id }}</span>
+</td>
+<!-- dir="auto" lets each task's own text pick its direction, so English task
+     data stays readable while the UI is in Hebrew/RTL, and vice versa.
+     Task data itself is never translated. -->
+<td class="py-3 pe-4">
+  <div class="fw-semibold text-body" style="min-width: 130px" dir="auto">{{ task().title }}</div>
+</td>
+<td class="py-3 pe-4">
+  @if (task().description) {
+    <!-- Clamped to two lines (see .text-clamp-2 in styles.scss) so long
+         descriptions keep row heights uniform. appTruncationTooltip reveals the
+         full text on hover/focus, but only when it is actually clipped; the
+         title attribute is the fallback if Bootstrap's JS is unavailable. -->
+    <div
+      class="small text-body-secondary text-clamp-2"
+      style="max-width: 220px"
+      dir="auto"
+      tabindex="0"
+      [title]="task().description"
+      [appTruncationTooltip]="task().description"
+    >
+      {{ task().description }}
+    </div>
+  } @else {
+    <div class="small text-body-tertiary fst-italic">{{ i18n.t().tasks.noDescription }}</div>
+  }
+</td>
+<td class="py-3">
+  <span class="badge rounded-pill" [class]="priorityBadgeClass">{{ i18n.t().priorities[task().priority] }}</span>
+</td>
+<td class="py-3">
+  <span class="badge rounded-pill" [class]="statusBadgeClass">{{ i18n.t().statuses[task().status] }}</span>
+</td>
+<td class="py-3 text-nowrap small text-body-secondary">
+  <span class="d-inline-flex align-items-center gap-1">
+    <i class="bi bi-calendar-event"></i>{{ task().dueDate }}
+  </span>
+</td>
+<td class="py-3 pe-3">
+  <div class="d-flex gap-2 justify-content-end" role="group" aria-label="Task actions">
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-primary"
+      (click)="onEdit()"
+      [attr.aria-label]="i18n.t().tasks.edit + ' ' + task().title"
+      [title]="i18n.t().tasks.edit"
+    >
+      <i class="bi bi-pencil-fill"></i>
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-danger"
+      (click)="onDelete()"
+      [attr.aria-label]="i18n.t().tasks.delete + ' ' + task().title"
+      [title]="i18n.t().tasks.delete"
+    >
+      <i class="bi bi-trash-fill"></i>
+    </button>
+  </div>
+</td>

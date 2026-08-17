@@ -1,0 +1,102 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="card shadow-sm border-0" novalidate>
+  <div class="card-header bg-white">
+    <h2 class="h5 mb-0 d-flex align-items-center gap-2">
+      <i class="bi" [class.bi-plus-circle]="!isEditMode" [class.bi-pencil-square]="isEditMode"></i>
+      {{ isEditMode ? i18n.t().form.editTask : i18n.t().form.newTask }}
+    </h2>
+  </div>
+
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-12 col-md-8">
+        <label for="title" class="form-label">
+          {{ i18n.t().form.title }} <span class="text-danger">*</span>
+        </label>
+        <input
+          id="title"
+          type="text"
+          class="form-control"
+          formControlName="title"
+          [class.is-invalid]="form.controls.title.invalid && form.controls.title.touched"
+          [placeholder]="i18n.t().form.titlePlaceholder"
+        />
+        <div class="invalid-feedback">
+          @if (form.controls.title.errors?.["required"]) {
+            {{ i18n.t().form.titleRequired }}
+          } @else if (form.controls.title.errors?.["maxlength"]) {
+            {{ i18n.t().form.titleMaxLength }}
+          }
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4">
+        <label for="dueDate" class="form-label">
+          {{ i18n.t().form.dueDate }} <span class="text-danger">*</span>
+        </label>
+        <input
+          id="dueDate"
+          type="date"
+          class="form-control"
+          formControlName="dueDate"
+          [class.is-invalid]="form.controls.dueDate.invalid && form.controls.dueDate.touched"
+        />
+        <div class="invalid-feedback">{{ i18n.t().form.dueDateRequired }}</div>
+      </div>
+
+      <div class="col-12">
+        <label for="description" class="form-label">{{ i18n.t().form.description }}</label>
+        <textarea
+          id="description"
+          class="form-control"
+          formControlName="description"
+          rows="2"
+          [placeholder]="i18n.t().form.descriptionPlaceholder"
+        ></textarea>
+      </div>
+
+      <div class="col-12 col-sm-6">
+        <label for="priority" class="form-label">{{ i18n.t().form.priority }}</label>
+        <!-- [value] stays the TaskPriority enum value, so the form control and
+             the API payload are unaffected; only the visible label is localized. -->
+        <select id="priority" class="form-select" formControlName="priority">
+          @for (priority of priorities; track priority) {
+            <option [value]="priority">{{ i18n.t().priorities[priority] }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="col-12 col-sm-6">
+        <label for="status" class="form-label">{{ i18n.t().form.status }}</label>
+        <select id="status" class="form-select" formControlName="status">
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ i18n.t().statuses[status] }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer bg-white d-flex justify-content-end gap-2">
+    <!-- Always available: in a modal, Cancel is also how the user closes it. -->
+    <button
+      type="button"
+      class="btn btn-outline-secondary d-inline-flex align-items-center gap-1"
+      (click)="onCancel()"
+      [disabled]="saving()"
+    >
+      <i class="bi bi-x-lg"></i>{{ i18n.t().form.cancel }}
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary d-inline-flex align-items-center gap-1"
+      [disabled]="saving()"
+    >
+      @if (saving()) {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      } @else {
+        <i class="bi bi-check-lg"></i>
+      }
+      {{ isEditMode ? i18n.t().form.update : i18n.t().form.save }}
+    </button>
+  </div>
+</form>

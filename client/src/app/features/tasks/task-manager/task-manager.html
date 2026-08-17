@@ -1,0 +1,112 @@
+<header class="bg-app-header text-white py-4 py-md-5 mb-4 shadow-sm">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div>
+        <h1 class="h3 mb-1 d-flex align-items-center gap-2">
+          <i class="bi bi-list-check"></i> {{ i18n.t().app.title }}
+        </h1>
+        <p class="mb-0 opacity-75">{{ i18n.t().app.subtitle }}</p>
+      </div>
+
+      <!-- Bootstrap dropdown (JS already loaded via angular.json "scripts").
+           Scales to more languages without changing the header layout. -->
+      <div class="dropdown">
+        <button
+          id="languageMenu"
+          type="button"
+          class="btn btn-sm btn-outline-light dropdown-toggle d-inline-flex align-items-center gap-2"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          [attr.aria-label]="i18n.t().language.label"
+        >
+          <i class="bi bi-globe2"></i>
+          {{ i18n.language() === "he" ? i18n.t().language.hebrew : i18n.t().language.english }}
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="languageMenu">
+          <li>
+            <button
+              type="button"
+              class="dropdown-item d-flex align-items-center gap-2"
+              [class.active]="i18n.language() === 'en'"
+              (click)="i18n.setLanguage('en')"
+            >
+              <!-- Always rendered, just hidden, so both labels stay aligned. -->
+              <i class="bi bi-check2" [class.invisible]="i18n.language() !== 'en'"></i>
+              {{ i18n.t().language.english }}
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="dropdown-item d-flex align-items-center gap-2"
+              [class.active]="i18n.language() === 'he'"
+              (click)="i18n.setLanguage('he')"
+            >
+              <i class="bi bi-check2" [class.invisible]="i18n.language() !== 'he'"></i>
+              {{ i18n.t().language.hebrew }}
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container pb-4 pb-md-5">
+  @if (errorMessage(); as message) {
+    <div class="alert alert-danger alert-dismissible d-flex align-items-center gap-2" role="alert">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <div class="flex-grow-1">{{ message }}</div>
+      <button type="button" class="btn-close" aria-label="Close" (click)="dismissError()"></button>
+    </div>
+  }
+
+  @if (successMessage(); as message) {
+    <div class="alert alert-success alert-dismissible d-flex align-items-center gap-2" role="alert">
+      <i class="bi bi-check-circle-fill"></i>
+      <div class="flex-grow-1">{{ message }}</div>
+      <button type="button" class="btn-close" aria-label="Close" (click)="dismissSuccess()"></button>
+    </div>
+  }
+
+  <div class="d-flex justify-content-end mb-3">
+    <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" (click)="openCreateForm()">
+      <i class="bi bi-plus-lg"></i>{{ i18n.t().form.newTask }}
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center align-items-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">{{ i18n.t().tasks.loading }}</span>
+      </div>
+    </div>
+  } @else {
+    <app-task-list [tasks]="tasks()" (edit)="onEdit($event)" (delete)="onDelete($event)" />
+  }
+</div>
+
+<!-- The form lives in a modal so the list gets the full page width.
+     TaskForm's own .card acts as the modal content, so it needs no changes. -->
+<div #taskModal class="modal fade" tabindex="-1" aria-hidden="true" [attr.aria-label]="i18n.t().form.newTask">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <!-- .modal-content is required: Bootstrap sets pointer-events:none on
+         .modal-dialog and only re-enables it here, so without this wrapper the
+         form renders but cannot be clicked. -->
+    <div class="modal-content">
+      <app-task-form
+        [taskToEdit]="editingTask()"
+        [saving]="saving()"
+        (save)="onSave($event)"
+        (cancelEdit)="onCancelEdit()"
+      />
+    </div>
+  </div>
+</div>
+
+<footer class="border-top mt-auto py-4">
+  <div class="container text-center text-body-secondary small">
+    <p class="mb-0">&copy; {{ i18n.t().footer.rights }}</p>
+  </div>
+</footer>
