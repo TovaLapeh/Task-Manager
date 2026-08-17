@@ -2,7 +2,8 @@ import { TaskPriority, TaskStatus } from "../models/task.model";
 
 export type Language = "en" | "he";
 
-export const DEFAULT_LANGUAGE: Language = "en";
+/** The assignment specifies a Hebrew UI, so Hebrew is the default. */
+export const DEFAULT_LANGUAGE: Language = "he";
 
 /**
  * Shape of the UI dictionary. Both language dictionaries must satisfy this
@@ -182,7 +183,7 @@ const he: Translations = {
   },
   statuses: {
     [TaskStatus.Pending]: "ממתינה",
-    [TaskStatus.InProgress]: "בביצוע",
+    [TaskStatus.InProgress]: "בתהליך",
     [TaskStatus.Completed]: "הושלמה",
   },
 };

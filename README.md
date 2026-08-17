@@ -8,7 +8,7 @@ The application lets a user manage a list of tasks (title, description, priority
 
 All state lives on the server: the client is a thin view over the API, so every create/edit/delete goes through `GET/POST/PUT/DELETE /tasks` and is written to `server/data/tasks.json`. Refreshing the page always reflects the current server state.
 
-The UI is bilingual (English / Hebrew) with full LTR/RTL support. English is the default.
+The UI is bilingual (Hebrew / English) with full RTL/LTR support. Hebrew is the default; the language can be switched at any time from the header.
 
 ## 2. Technologies Used
 
@@ -164,12 +164,12 @@ The enum values above are the canonical stored representation. They are **never*
 - `:id` route params must be a positive integer, or 400 is returned before touching the data file.
 - Malformed JSON bodies are caught and turned into a 400, not a 500.
 
-## 11. Internationalization (English / Hebrew)
+## 11. Internationalization (Hebrew / English)
 
 - The dictionary lives in `core/i18n/translations.ts`. Both languages implement a shared `Translations` interface, so a missing or misspelled key is a **compile-time error** rather than a blank label at runtime.
 - `LanguageService` holds the active language in a signal and exposes `t = computed(() => TRANSLATIONS[language()])`. Templates read keys as `i18n.t().tasks.priority`; switching language updates the UI instantly with no page reload and **no API calls**.
 - An `effect()` mirrors the language onto `<html lang dir>`, so Hebrew renders the whole app RTL.
-- The choice persists in `localStorage` under a single key; English is used whenever nothing valid is stored.
+- The choice persists in `localStorage` under a single key; `DEFAULT_LANGUAGE` (Hebrew) is used whenever nothing valid is stored. `index.html` ships with `lang="he" dir="rtl"` to match, so the first paint is already RTL and there is no left-to-right flash.
 - Only static UI text is translated. Task data (titles, descriptions) is rendered with `dir="auto"` so each task's own text picks its direction and stays readable regardless of the UI language.
 
 ## 12. Important Architectural Decisions
@@ -192,6 +192,7 @@ The enum values above are the canonical stored representation. They are **never*
 - The client always talks to a server on `http://localhost:3000`; no environment-specific build configuration was introduced, since the assignment targets local evaluation.
 - `id` is a server-assigned auto-incrementing integer (`max existing id + 1`), matching the example in the assignment (`"id": 1`).
 - Language names in the switcher ("English", "עברית") are shown in their own language and are deliberately identical in both dictionaries — a user who cannot read the current language still needs to find their way back.
+- **Priority and status are stored in English, not Hebrew.** The brief's sample JSON shows Hebrew values (`"priority": "גבוהה"`). This implementation stores the canonical enum (`"High"`) and localizes only the display label, so the persisted data does not change meaning when the UI language changes and the server can validate against a fixed set. The trade-off is that the file format differs from the sample; switching to Hebrew values would tie the stored data to one UI language.
 - The Task/TaskPriority/TaskStatus types are intentionally duplicated between `client/` and `server/` rather than extracted into a shared package. The two projects have independent `package.json`s, build tools and lifecycles; a shared workspace package would add real tooling complexity (workspace config, a build step, path resolution in both `tsconfig`s) to keep ~15 lines of types in one place.
 
 ## 14. Known Limitations

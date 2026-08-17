@@ -2,6 +2,7 @@ import { provideHttpClient } from "@angular/common/http";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { TestBed } from "@angular/core/testing";
 import { App } from "./app";
+import { DEFAULT_LANGUAGE, TRANSLATIONS } from "./core/i18n/translations";
 import { API_BASE_URL } from "./core/tokens/api-base-url.token";
 
 describe("App", () => {
@@ -18,10 +19,12 @@ describe("App", () => {
     expect(app).toBeTruthy();
   });
 
-  it("should render the task manager heading", () => {
+  // Asserted against the dictionary rather than a literal, so the test stays
+  // valid if the default language changes.
+  it("should render the heading in the default language", () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector("h1")?.textContent).toContain("Task Manager");
+    expect(compiled.querySelector("h1")?.textContent).toContain(TRANSLATIONS[DEFAULT_LANGUAGE].app.title);
   });
 });
