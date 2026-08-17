@@ -8,6 +8,7 @@
     "start": "concurrently --names \"api,web\" --prefix-colors \"blue,green\" \"npm --prefix server run serve\" \"npm --prefix client start\"",
     "start:server": "npm --prefix server run dev",
     "start:server:once": "npm --prefix server run serve",
+    "start:single": "npm --prefix client run build && npm --prefix server run serve",
     "start:client": "npm --prefix client start",
     "build": "npm --prefix server run build && npm --prefix client run build",
     "test": "npm --prefix client test"

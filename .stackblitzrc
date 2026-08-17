@@ -1,6 +1,6 @@
 {
   "installDependencies": true,
-  "startCommand": "npm start",
+  "startCommand": "npm run start:single",
   "env": {
     "NG_CLI_ANALYTICS": "false"
   }

@@ -93,18 +93,23 @@ the command StackBlitz uses. Open <http://localhost:4200>.
 
 ### Running on StackBlitz
 
-Open the project with the preview pinned to the UI port:
+<https://stackblitz.com/github/TovaLapeh/Task-Manager>
 
-<https://stackblitz.com/github/TovaLapeh/Task-Manager?port=4200>
+StackBlitz runs `npm run start:single` (see `.stackblitzrc`), which builds the
+client once and then serves it from Express alongside the API on a **single
+port**. The preview therefore shows the application immediately, with no port to
+choose.
 
-The first build takes roughly 15–60 seconds — wait for
-`➜ Local: http://localhost:4200/` in the terminal before expecting the preview.
+This mode exists because a sandboxed environment previews whichever port opens
+first: with the two-port dev setup the API always wins that race, because the
+Angular build takes longer, and the preview would land on the API instead of the
+UI. Serving both from one process removes the ambiguity, and mirrors how a build
+is normally served in production.
 
-Two ports are served: **4200** is the user interface, **3000** is the API.
-StackBlitz previews whichever port opens first, and the API wins that race
-because the Angular build takes longer, so the preview may land on port 3000.
-If it shows the API landing page instead of the app, switch the port selector in
-the preview pane to 4200.
+Allow roughly 20–40 seconds for the initial build before the preview appears.
+
+Local development is unaffected — `npm start` still runs the dev server with hot
+reload on 4200 and the API on 3000.
 
 The client talks to the API through the Angular dev-server proxy
 (`client/proxy.config.json`), so requests go to `/tasks` on the same origin and
@@ -217,7 +222,8 @@ The enum values above are the canonical stored representation. They are **never*
 - **Bootstrap compiled from SASS** rather than loaded as prebuilt CSS. Overriding `--bs-primary` would not work: Bootstrap compiles theme colours into hardcoded values (`.btn-primary` sets `--bs-btn-bg: #0d6efd`), so the palette must be set before compilation. `styles.scss` sets `$primary` once and every button, focus ring, link and dropdown highlight follows.
 - **Bootstrap JS plugins are accessed through `shared/bootstrap-plugins.ts`**, which declares the minimal typed surface used. The bundle is loaded globally via `angular.json`, so it cannot be imported as a module; this keeps the untyped `window` cast in one place instead of at each call site, and returns `null` when unavailable so callers degrade gracefully.
 - **Long descriptions are clamped to two lines**, with `appTruncationTooltip` showing the full text on hover/focus — and only when the text is actually clipped. A `title` attribute remains as a fallback if Bootstrap's JS is unavailable.
-- **API base URL via an `InjectionToken`** rather than hardcoded in `TaskService`, so it can be swapped per environment or in tests.
+- **API base URL via an `InjectionToken`** rather than hardcoded in `TaskService`, so it can be swapped per environment or in tests. It is set to an empty string, meaning same-origin: in development the Angular dev server proxies `/tasks` to the API, and in the single-port build Express serves both. Neither mode needs a hardcoded host.
+- **The server serves the built client only if that build exists.** `createApp()` checks for `client/dist` at startup: during development the directory is absent and the API stays a pure API, while the single-port build serves the SPA plus a fallback route. One code path, no environment flags.
 - **Data file path anchored to `process.cwd()`**, not `__dirname`: `tsx` runs `src/index.ts` while the production build runs `dist/index.js`, so a `__dirname`-relative path would resolve to two different files. Anchoring to the working directory keeps dev and prod on the same `server/data/tasks.json`.
 
 ## 13. Assumptions
