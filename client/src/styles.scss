@@ -6,6 +6,10 @@
  * compiles theme colours into hardcoded values (e.g. `.btn-primary` sets
  * `--bs-btn-bg: #0d6efd`), so the palette has to be set before the SASS is
  * compiled. Order matters — functions, then our overrides, then the rest.
+ *
+ * @import is used rather than @use because Bootstrap 5.3 still relies on it
+ * internally and does not expose its variables through the SASS module system.
+ * The resulting deprecation warning is silenced in angular.json.
  */
 @import "bootstrap/scss/functions";
 
