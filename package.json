@@ -5,8 +5,9 @@
   "description": "Task Manager — Angular client and Express/JSON API. Root scripts install and run both projects together.",
   "scripts": {
     "postinstall": "npm --prefix server install && npm --prefix client install",
-    "start": "concurrently --names \"api,web\" --prefix-colors \"blue,green\" \"npm --prefix server run dev\" \"npm --prefix client start\"",
+    "start": "concurrently --names \"api,web\" --prefix-colors \"blue,green\" \"npm --prefix server run serve\" \"npm --prefix client start\"",
     "start:server": "npm --prefix server run dev",
+    "start:server:once": "npm --prefix server run serve",
     "start:client": "npm --prefix client start",
     "build": "npm --prefix server run build && npm --prefix client run build",
     "test": "npm --prefix client test"
