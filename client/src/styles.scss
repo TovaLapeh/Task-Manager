@@ -12,7 +12,7 @@
 // Brand colour. Deliberately a darker green: Bootstrap picks button text
 // colour by contrast ratio, and a lighter green (#16a34a) fell below the
 // threshold and produced black-on-green text. This shade keeps white text.
-$primary: #15803d;
+$primary: #18b1aa;
 
 @import "bootstrap/scss/bootstrap";
 
@@ -22,7 +22,7 @@ $primary: #15803d;
 
 // Bootstrap's palette has no teal->green gradient utility.
 .bg-app-header {
-  background-image: linear-gradient(135deg, #0d9488, $primary);
+  background-image: linear-gradient(135deg, #6b6b6b, $primary);
 }
 
 // Bootstrap ships .text-truncate (single line) but no line-clamp utility.

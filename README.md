@@ -32,6 +32,8 @@ No state-management library, ORM, database, authentication, i18n library, or Doc
 
 ```
 task-manager/
+├── package.json                   Root scripts: install + run both projects
+├── .stackblitzrc                  StackBlitz install/start configuration
 ├── server/                        Express + TypeScript API
 │   ├── data/
 │   │   └── tasks.json             JSON persistence file (the "database")
@@ -46,6 +48,7 @@ task-manager/
 │       └── index.ts               Process entry point (starts the HTTP server)
 │
 └── client/                        Angular application
+    ├── proxy.config.json          Dev-server proxy: /tasks -> API
     └── src/
         ├── styles.scss            Bootstrap SASS build + theme colour + 2 utilities
         └── app/
@@ -72,15 +75,30 @@ task-manager/
 
 ## 5. Installation
 
-From the project root:
+A single install from the project root sets up both projects (a `postinstall`
+script installs `server/` and `client/`):
 
 ```bash
-cd server
-npm install
-
-cd ../client
 npm install
 ```
+
+## 5a. Quick Start (both projects at once)
+
+```bash
+npm start
+```
+
+This runs the API and the Angular dev server together via `concurrently`, and is
+the command StackBlitz uses. Open <http://localhost:4200>.
+
+The client talks to the API through the Angular dev-server proxy
+(`client/proxy.config.json`), so requests go to `/tasks` on the same origin and
+are forwarded to `http://localhost:3000`. That means there is no hardcoded API
+host and no CORS round-trip in development, and the app also runs unchanged in
+sandboxed environments such as StackBlitz, where the browser cannot reach the
+container's `localhost`.
+
+The two projects can still be run separately — see below.
 
 ## 6. Running the Server
 
@@ -108,7 +126,7 @@ cd client
 npm start          # ng serve, http://localhost:4200
 ```
 
-The client calls the API at `http://localhost:3000` (see `app.config.ts`, `API_BASE_URL` token). Start the server first, or reload the page after starting it — the client shows a clear error banner if the API is unreachable rather than failing silently.
+`API_BASE_URL` (see `app.config.ts`) is intentionally empty, so the client issues same-origin requests to `/tasks` and the dev-server proxy forwards them to the API. Start the server first, or reload the page after starting it — the client shows a clear error banner if the API is unreachable rather than failing silently.
 
 ## 8. API Endpoints
 
